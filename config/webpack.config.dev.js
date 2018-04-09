@@ -19,9 +19,9 @@ const publicPath = '/';
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
 const publicUrl = '';
+const rootDirectory = path.resolve(__dirname, '../');
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
-
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
@@ -34,6 +34,7 @@ module.exports = {
   // The first two entry points enable "hot" CSS and auto-refreshes for JS.
   entry: [
     // We ship a few polyfills by default:
+    'babel-polyfill',
     require.resolve('./polyfills'),
     // Include an alternative client for WebpackDevServer. A client's job is to
     // connect to WebpackDevServer by a socket and get notified about changes.
@@ -115,7 +116,7 @@ module.exports = {
             options: {
               formatter: eslintFormatter,
               eslintPath: require.resolve('eslint'),
-              
+           
             },
             loader: require.resolve('eslint-loader'),
           },
@@ -141,7 +142,15 @@ module.exports = {
           // Process JS with Babel.
           {
             test: /\.(js|jsx|mjs)$/,
-            include: paths.appSrc,
+            include: [
+              path.resolve(rootDirectory, 'index.web.js'),
+              paths.appSrc,
+              path.resolve(rootDirectory, 'node_modules/react-navigation'),
+              path.resolve(rootDirectory, 'node_modules/react-native-drawer-layout'),
+              path.resolve(rootDirectory, 'node_modules/react-native-dismiss-keyboard'),
+              path.resolve(rootDirectory, 'node_modules/react-native-safe-area-view'),
+              path.resolve(rootDirectory, 'node_modules/react-native-tab-view')
+            ],
             loader: require.resolve('babel-loader'),
             options: {
               
@@ -243,6 +252,10 @@ module.exports = {
     // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
     // You can remove this if you don't use Moment.js:
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      __DEV__: process.env.NODE_ENV === 'production' || true
+    }),
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.
