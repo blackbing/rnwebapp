@@ -5,9 +5,9 @@ import App from './app/index';
 
 
 // register the app
-AppRegistry.registerComponent('App', () => App);
+AppRegistry.registerComponent('rnwebapp', () => App);
 
-AppRegistry.runApplication('App', {
+AppRegistry.runApplication('rnwebapp', {
   initialProps: {},
   rootTag: document.getElementById('react-app')
 });

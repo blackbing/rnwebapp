@@ -1,0 +1,3 @@
+rootProject.name = 'rnwebapp'
+
+include ':app'
